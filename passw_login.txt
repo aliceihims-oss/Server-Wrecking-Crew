@@ -1,0 +1,30 @@
+
+                                                                                                Wednesday 11/03/2026
+Report On Password Vuln Test On Portsigger
+
+
+Today I was able to perform a brute-force attack on portswigger.net. 
+I created an account and navigated to the authentication lab. There, I set up my proxy for capture and Burp Suite.
+I entered an invalid username like "paul" with a password like "pass" and got a "username incorrect" syntax message. 
+
+In Burp Suite, I sent this request to the Intruder. In the Intruder, I cleared the username field and added a payload position,
+ then configured the payload and pasted a list of usernames.
+I noticed a particular response length that repeated for most usernames. Then I saw a different length for the username "academico". 
+
+I tested this username with a random password like "pasds" on the login page and it said "password incorrect." This confirmed the username "academico" was correct.
+I sent the login request to the Intruder again. This time I set the username field to "academico" and added a payload position on the password field. 
+I uploaded a list of different passwords from the password list on PortSwigger. I started the attack and concentrated on the status codes. 
+
+Most attempts had a 200 status code, but one password triggered a 302 status code, which looked suspicious.
+I took that password, which was "hunter", and entered it on the login page with the username "academico". I successfully gained access.
+
+
+The correct credentials were:
+Username: academico
+Password: hunter
+
+
+Vulnerabilities found:
+Verbose messages that reveal whether a username is valid or not.
+No brute-force protection to block multiple login attempts.
+
