@@ -1,0 +1,68 @@
+# Server-Side Request Forgery (SSRF) — Research Notes
+
+## What is SSRF?
+SSRF (Server-Side Request Forgery) is when an attacker tricks a server-side application into making unauthorized requests to unintended locations.
+
+## Why It Matters for Full Stack Developers
+As a full stack developer, we often build features that fetch external data — like link previews, image processing, or webhook integrations. If URLs aren't validated properly, an attacker essentially gains a proxy into the internal network.
+
+> SSRF is now consolidated into the **"Broken Access Control"** category in the latest security standards, because it's fundamentally an authorization failure where the server performs actions it shouldn't.
+
+---
+
+## Types of SSRF
+
+### 1. Regular SSRF
+The server fetches the data and **returns the internal content** (e.g. a config file or admin page) directly back to the attacker.
+
+### 2. Blind SSRF
+The application triggers a backend request but **doesn't show the result**. The attacker must use **out-of-band (OOB)** techniques — like monitoring their own DNS logs — to confirm whether the server attempted to connect.
+
+---
+
+## The "Golden Target" — Cloud Metadata Service
+In cloud environments, the metadata service at `169.254.169.254` is a critical target.
+
+If hosted on **AWS, GCP, or Azure**, an attacker can use SSRF to hit this internal IP and **steal temporary IAM credentials**, potentially taking over the entire cloud account.
+
+---
+
+## Common Filter Bypass Techniques
+
+| Technique | Description |
+|---|---|
+| **IP Encoding** | Instead of `127.0.0.1`, attackers use decimal (`2130706433`) or octal (`017700000001`) — some parsers don't block these, but the system still resolves them to localhost |
+| **DNS Rebinding** | A Time-of-Check to Time-of-Use (TOCTOU) attack — a domain resolves to a safe IP during validation, then switches to a private internal IP when the actual request is made |
+| **Protocol Smuggling** | Using protocols like `gopher://` or `dict://` to send raw commands to internal services like Redis or Memcached |
+
+---
+
+## Tools & Methods
+
+### Exploitation Tools
+- **SSRFmap** — Automates the exploitation of discovered SSRF vulnerabilities
+- **Gopherus** — Generates payloads for different protocols to achieve RCE through SSRF
+
+### Detection & Defence Tools
+- **Burp Collaborator** — Detects blind SSRF by providing a unique domain and watching for successful "pingbacks" from the server
+- **Semgrep** — A static analysis tool that can be integrated into a CI/CD pipeline to find risky code where user input flows into network functions
+
+### My Report
+
+Today i carried out research on Server-Side Request Forgery (SSRF) which i learnt it is basically when an attacker tricks a server-side application into making unauthorized requests to unintended locations.
+
+i learned that this is very important for me as a full stack developer because we often build features that fetch external data like link previews,image processing or webhook integrations, and if i don't validate these URLs properly,i'm essentially giving an attacker a proxy into my internal network. i also learned that SSRF is now consolidated into the "Broken Access Control" category in the latest security standards because it's fundamentally an authorization failure where the server performs actions it shouldn't.
+
+i learned there are two main types of SSRF which are:
+1.Regular SSRF = where the server fetches the data and actually returns the internal content (like a config file or admin page) back to the attacker.
+2.Blind SSRF = where the application triggers a backend request but doesn't show the result, so the attacker has to use "out-of-band" (OOB) techniques like monitoring their own DNS logs to see if the server tried to connect.
+i also learned about the "Golden Target" in cloud environments which is the metadata service at 169.254.169.254. if i'm hosting on AWS, GCP, or Azure, an attacker can use SSRF to hit this internal IP and steal temporary IAM credentials to take over the whole cloud account.
+i also learned some common ways attackers bypass the filters i might try to write:
+- IP Encoding: instead of 127.0.0.1, they use decimal (2130706433) or octal (017700000001) which some parsers don't block but the system still resolves to localhost.
+- DNS Rebinding: this is a "Time-of-Check to Time-of-Use" attack where a domain resolves to a safe IP during my validation check but then switches to a private internal IP when the server actually makes the request.
+- Protocol Smuggling: using things like gopher:// or dict:// to send raw commands to internal services like Redis or Memcached.
+i also learned about some tools and methods for testing and defending against this:
+- SSRFmap = used to automate the exploitation of discovered SSRF vulnerabilities.
+- Gopherus = a tool used to generate payloads for different protocols to get RCE through SSRF.
+- Burp Collaborator = used to detect blind SSRF by providing a unique domain and watching for successful "pingbacks" from the server.
+- Semgrep = a static analysis tool i can use in my CI/CD pipeline to find risky code where user input flows into network functions
