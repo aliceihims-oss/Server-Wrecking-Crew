@@ -1,0 +1,57 @@
+
+
+AUTHENTICATION VULNERABILITE
+Definition:
+Authentication: this is the process of verifying the identity a user or client
+The 3 types include
+-	Something you know e.g password
+-	What you have phone, it has to do with possession factors
+-	And something you are e.g biometrics
+
+Vulnerabilities in authentication mechanisms
+
+We will look at vulnerabilities in the following areas
+-	In password-based login
+-	In multifactor authentication
+-	In other authentication mechanisms
+ Causes of authentication vulnerabilities
+-	Insecure implementation of the authentication mechanism
+-	Improper restriction of authentication attempts 
+-	Verbrose error messages eg ‘incorrect username’
+-	Vulnerable transmission of credentials eg HTTP
+-	Insecure storage of credentials
+-	Insecure forgot password Functionality
+-	 
+-	Design flaws
+-	Logic flaw
+-	Configuration flaw 
+Impact of authentication vulnerabilities
+This vulnerability has been in 2013 and 2017  2nd top and in 2021 at A7
+          How to find and exploit authentication vulnerability
+1.Week password complexity requirements
+        Verify from the site how the password mechanism is whether it requires MFA
+ or if it has a limited length of passwords. Get to know the user and try connected entities to him
+2. Improper restriction of Authentication attempts
+-	Manually submit bad login attempt for account you control after 10 attempt this will prove that there are lockout mechanism
+-	Run a brute force attack to get the valid password using hydra, burp intruder, etc
+-	If the account is lockout, monitor the requests and responses to determine if the lockout mechanism is insecure
+-	  Make a request with a valid username and invalid password take note of the respond
+-	Make a request with a an invalid username and take note of the response
+3.	Insecure forgot password functionalities
+-	Identify if the application has any forgotten password functionality
+-	If it does perform  a complete walk-through of the forgot functionality using an account you have an account you have control of
+       while intercepting the requests / responses in a proxy 
+-	Review the functionality to determine if it allows username enumeration or brute-force attack
+4.	Insecure storage of credentials
+-	Review all the application’s authentication related functionality if you find any instances where user’s password is transmitted to the client if its plain text
+-	If you get remote code execution review the database to get users passwords
+How to prevent authentication vulneribilities
+-	Wherever possible, implement multi-factor authentication
+-	Change all default credentials
+-	Always use encrypted channels HTTPS
+-	Only use POST requests should be used to transmit credentials to the server not GET requests
+-	Stored credentials should be hashed and salted using cryptographically secure algorithms 
+-	Implement an effective password policy
+-	Use password checker eg zxcvbn javascript library
+
+Check out on security verification standards inorder to make your password mechanism strong
