@@ -1,0 +1,21 @@
+
+
+REPORT ON LAB 3
+
+I completed the first lab successfully where a unique response length led me to the credentials "academico:hunter" using Burp Intruder. 
+However, when I moved on to the next lab, I encountered a different challenge.
+ After intercepting the login request and running the Intruder attack, I noticed that all responses had
+ similar content lengths with no unique length standing out, making the previous analysis method useless. 
+To identify valid usernames, I needed to analyze the actual error messages. I sent a request to Repeater, 
+used the Render tab to view the HTML response, and copied the exact error message "Invalid username or password.
+" I then attempted to filter the Intruder results to find responses that did NOT contain this error message, 
+but discovered that Burp Suite Community Edition does not support negative search filtering—this feature requires the Professional version.
+Since I hit a dead end with Burp, I switched to Hydra on Kali Linux. Using the captured request parameters, 
+
+I ran the command: 
+hydra -l administrator -P /usr/share/wordlists/rockyou.txt 0aa0005f04.web-security-academy.net http-post-form "/login:username=^USER^&password=^PWD^:Invalid username or password". 
+The results were problematic—Hydra flagged every single password attempt as successful, showing hundreds of false positives like administrator:123456, 
+administrator:password, and administrator:qwerty. This happened because Hydra did not find the failure string "Invalid username or password" in any response, 
+so it assumed every attempt was valid. The failure string likely needed to be an exact match including HTML context, or the application may have used redirects before displaying errors. 
+This experience taught me that both Burp Community Edition and Hydra have limitations, 
+and that testing configurations with known invalid credentials first is essential to avoid false positives.
